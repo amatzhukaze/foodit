@@ -6,7 +6,7 @@ var logger = require('morgan');
 var multer = require('multer');
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, __dirname + "/uploads/");
+    cb(null, __dirname + "/public/images/uploads/");
   },
   filename: function(req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
@@ -57,7 +57,17 @@ app.post('/search/analyze', searchFields, function(req, res, next) {
   }
   PythonShell.run(__dirname + '/Data\ Stuff/calhacks_google_model.py', options, function(err, results) {
     if (err) throw err;
-    res.send(results[0]);
+    var resJSON = JSON.parse(results[0]);
+    // {'best_score': nan, 'best_image': '00000000.jpg', 'best_restaurant': "Angeline's Louisiana Kitchen", 'best_address': '2261 Shattuck Ave, Berkeley, CA 94704'}
+    var templateJSON = {
+      "inputimg": encodeURI('/images/uploads/' + req.files["image-upload"][0]["filename"]),
+      "matchimg": encodeURI('/images/food pics/' + resJSON['best_image']),
+      "matchscore": Math.floor(resJSON['best_score'] * 100),
+      "matchname": resJSON['best_restaurant'],
+      "matchaddress": resJSON['best_address'],
+      "matchdistance": 0
+    };
+    res.render('search_analyze', templateJSON);
   });
 });
 

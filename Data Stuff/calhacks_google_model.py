@@ -44,8 +44,20 @@ def script(user_uploaded_image_url):
   
   import numpy as np
   import pandas as po
+  import re
   
   DATA = po.read_csv("Data Stuff/DATA.csv")
+  
+  def string_to_dict(string):
+    keys = re.findall(r"(\w+)':", string)
+    values = re.findall(r": '(\d\.\d+)", string)
+     
+    dctionary = {}
+    for key, value in zip(keys, values):
+      dctionary[key] = float(value)
+    return dctionary
+ 
+  DATA["Label: Score"] = DATA["Label: Score"].apply(string_to_dict)
 
   import re
   
@@ -144,10 +156,10 @@ def script(user_uploaded_image_url):
   ### 4 of 4: IMAGE SCORE
   # average of matching labels scores
   
-  score = np.mean(list(shared_items.values()))
+  score = np.mean(list(shared_items.values()))/np.mean(list(DATA.loc[index_max, "Label: Score"].values()))
   
-  
-  print({"best_score": score, "best_image": winning_image, "best_restaurant": winning_restaurant, "best_address": winning_address})
+  import json
+  print(json.dumps({"best_score": str(score), "best_image": winning_image, "best_restaurant": winning_restaurant, "best_address": winning_address}))
 
 if __name__ == '__main__':
   script(sys.argv[1])
