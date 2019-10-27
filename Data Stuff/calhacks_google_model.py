@@ -8,23 +8,36 @@ Original file is located at
 
 # YEEHAW
 """
+import sys
 
-def __main(url)__:
-
-  def script(user_uploaded_image_url):
+def script(user_uploaded_image_url):
   """
   Arguments: the image url to a user-uploaded url xxxxxxxxxxx....xxxx.jpg
   
   Returns probability/score associated with match; image associated with the match; restaurant associated with match; address of restaurant as a JSON file
       # essentially a row in DATA
   """
-  
-  from pip._internal import main as pipmain
 
-  pipmain(['install', '--upgrade','google-cloud-vision'])
+  from pip._internal import main as pipmain
+  
+  #pipmain(['install', '--upgrade','google-cloud-vision'])
+  #pipmain(['install', 'ipython'])
+  # print(user_uploaded_image_url)
+  from IPython import get_ipython
+  #ipython = get_ipython()
+
+  # if '__IPYTHON__' in globals():
+  #ipython.magic("env GOOGLE_APPLICATION_CREDENTIALS=Data Stuff/Miscellaneous/instafoody-3a8750af0e73.json")
+
+  # ipython.magic("export GOOGLE_APPLICATION_CREDENTIALS=./Miscellaneous/instafoody-3a8750af0e73.json")
+  import os
+
+  os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="Data Stuff/Miscellaneous/instafoody-3a8750af0e73.json"
+  
   
   
   #!pip install --upgrade google-cloud-vision
+  from google.cloud import vision
   
   import random
   import string
@@ -32,6 +45,8 @@ def __main(url)__:
   import numpy as np
   import pandas as po
   
+  DATA = po.read_csv("Data Stuff/DATA.csv")
+
   import re
   
   import urllib.request
@@ -41,10 +56,34 @@ def __main(url)__:
       letters = string.ascii_lowercase
       return ''.join(random.choice(letters) for i in range(stringLength))
   
-  path = "user_images/"+randomString()+".jpg"
-  urllib.request.urlretrieve(user_uploaded_image_url, path)
+  # path = "user_images/"+randomString()+".jpg"
+  # urllib.request.urlretrieve(user_uploaded_image_url, path)
+
+  path = user_uploaded_image_url
   
   # Get labels of the user image
+  def detect_labels(path):
+    """Detects labels in the file."""
+    the_labels = []
+   
+    client = vision.ImageAnnotatorClient()
+ 
+    import io
+    with io.open(path, 'rb') as image_file:
+        content = image_file.read()
+   
+    #print(content)
+    image = vision.types.Image(content=content)
+ 
+    response = client.label_detection(image=image)
+    labels = response.label_annotations
+    #print('Labels:')
+ 
+    for label in labels:
+        #print(label.description)
+        the_labels.append(label)
+    return the_labels
+
   labels = detect_labels(path = path)
   
   # Compare labels to all labels in dataset;
@@ -55,6 +94,10 @@ def __main(url)__:
       ###### The current restaurant selection covers a wide range of international cuisine,
         ###### so homogenous scoring items will be assumed to be garbage/not food
   
+
+  # import DATA.csv
+  
+
   
   user_img_dictionary = {}
   
@@ -104,6 +147,7 @@ def __main(url)__:
   score = np.mean(list(shared_items.values()))
   
   
-  return {"best_score": score, "best_image": winning_image, "best_restaurant": winning_restaurant, "best_address": winning_address}
+  print({"best_score": score, "best_image": winning_image, "best_restaurant": winning_restaurant, "best_address": winning_address})
 
-script(url)
+if __name__ == '__main__':
+  script(sys.argv[1])

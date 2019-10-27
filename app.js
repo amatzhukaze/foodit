@@ -9,7 +9,7 @@ var storage = multer.diskStorage({
     cb(null, __dirname + "/uploads/");
   },
   filename: function(req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now());
+    cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
   }
 });
 var upload = multer({storage: storage});
@@ -18,6 +18,9 @@ let {PythonShell} = require("python-shell");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
+// const {GCP} = require("@google-cloud/storage")
+// const gcp = new GCP("instafoody", '/Data\ Stuff/Miscellaneous/instafoody-3a8750af0e73.json');
 
 var app = express();
 
@@ -54,7 +57,7 @@ app.post('/search/analyze', searchFields, function(req, res, next) {
   }
   PythonShell.run(__dirname + '/Data\ Stuff/calhacks_google_model.py', options, function(err, results) {
     if (err) throw err;
-    res.send(results);
+    res.send(results[0]);
   });
 });
 
