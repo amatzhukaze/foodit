@@ -14,6 +14,7 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 var stream = require("stream");
+let {PythonShell} = require("python-shell");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -41,11 +42,20 @@ app.post('/search/analyze', searchFields, function(req, res, next) {
    * Get JSON with list of matches
    * Use this JSON on template
    */
-  res.json({"image-url": req.files["image-upload"][0]["path"],
-            "sorting-method": req.body["sorting-method"],
-            "latitude": req.body["lat"],
-            "longitutde": req.body["lon"],
-            "address": req.body["address"]});
+  // res.json({"image-url": req.files["image-upload"][0]["path"],
+  //           "sorting-method": req.body["sorting-method"],
+  //           "latitude": req.body["lat"],
+  //           "longitutde": req.body["lon"],
+  //           "address": req.body["address"]});
+  options = {
+    mode: 'text',
+    pythonOptions: ['-u'],
+    args: [req.files["image-upload"][0]["path"]]
+  }
+  PythonShell.run(__dirname + '/Data\ Stuff/calhacks_google_model.py', options, function(err, results) {
+    if (err) throw err;
+    res.send(results);
+  });
 });
 
 app.post('/add/analyze', upload.fields([{name: "image-upload", maxCount: 1}, {name: "restaurant-name", maxCount: 1}, {name: "restaurant-address", maxCount: 1}]), function(req, res, next) {

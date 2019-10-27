@@ -10,7 +10,7 @@ Original file is located at
 """
 
 # Commented out IPython magic to ensure Python compatibility.
-def __main(url)__:
+def __main__(url):
 
   def script(user_uploaded_image_url):
 

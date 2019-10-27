@@ -5,6 +5,7 @@ $(document).ready(function() {
             $("input[name='lon']").attr('value', position.coords.longitude);
         }, function(error) {
             console.error(error);
+            // Use IP address
         });
     } else {
         // Use IP Address
