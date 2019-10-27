@@ -1,0 +1,17 @@
+extends layout
+
+block header-content
+  script(src="/javascripts/add.js")
+
+block content
+  h1 Add to dataset
+  form(action="/add/analyze" method="post" enctype="multipart/form-data" name="upload-form")
+    input(type="file" name="image-upload")
+    br
+    input(type="text" name="restaurant-name")
+    br
+    input(type="text" name="restaurant-address")
+    br
+    input(type="submit" value="Submit Data")
+
+  div(class="add-response")

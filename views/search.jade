@@ -1,0 +1,27 @@
+extends layout
+
+block head-content
+  script(src="/javascripts/search.js")
+
+block content
+  h1 Restaurant finder
+  form(action="/search/analyze" method="post" enctype="multipart/form-data" name="upload-form")
+    p Upload image:
+    input(type="file" name="image-upload")
+    br
+    p Sorting Method:
+    select(name="sorting-method")
+      option(value="relevance") Relevance
+      option(value="distance") Distance
+      option(value="alphabetical") Alphabetical
+    br
+    p Location (Optional):
+    p Coordinates:
+    input(type="number" name="lat")
+    input(type="number" name="lon")
+    p Address:
+    input(type="text" name="address")
+    br
+    input(type="submit" value="Search")
+
+  div(class="output")

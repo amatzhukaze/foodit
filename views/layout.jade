@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")
+    block head-content
+  body
+    ul(class="navbar")
+      li(class="navbar-logo"): img(src="logo.svg")
+      li(class="navbar-link"): a(href="/search") Search
+      li(class="navbar-link"): a(href="/add") Add
+
+    block content

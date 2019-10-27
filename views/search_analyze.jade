@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 Your image:
+  img (src=imageurl)
+
+  h1 Best Matches:
+  ul
+    for match in matches
+      li(class="match-box")
+        img(class="match-image" src=match.img)
+        h2= match.percent + "%"
+        ul
+          li(class="match-detail")= match.name
+          li(class="match-detail")= match.address
+          li(class="match-detail")= match.distance
